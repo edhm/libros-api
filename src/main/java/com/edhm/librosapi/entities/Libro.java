@@ -19,6 +19,13 @@ public class Libro {
 	private String isbn;
 	private double costo;
 	private int numPaginas;
+	private String imagen;
+	public String getImagen() {
+		return imagen;
+	}
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
+	}
 	public Long getId() {
 		return id;
 	}
@@ -64,9 +71,12 @@ public class Libro {
 	@Override
 	public String toString() {
 		return "Libro [id=" + id + ", titulo=" + titulo + ", autor=" + autor + ", anioDePubblicacion="
-				+ anioDePubblicacion + ", isbn=" + isbn + ", costo=" + costo + ", numPaginas=" + numPaginas + "]";
+				+ anioDePubblicacion + ", isbn=" + isbn + ", costo=" + costo + ", numPaginas=" + numPaginas
+				+ ", imagen=" + imagen + "]";
+	}
+	
 	}
 	
 
 	
-}
+

@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.edhm.librosapi.entities.Libro;
 import com.edhm.librosapi.services.LibrosService;
-import com.edhm.productos.api.entities.Producto;
 
 @RestController
 public class LibroController {
@@ -41,6 +40,7 @@ public class LibroController {
 		logger.info("libros: " + libros);
 		return libros;
 	}
+
 	@GetMapping("/libros/images/{filename:.+}")
 	public ResponseEntity<Resource> files(@PathVariable String filename) throws Exception {
 		logger.info("call images: " + filename);
@@ -56,27 +56,33 @@ public class LibroController {
 				.header(HttpHeaders.CONTENT_TYPE, Files.probeContentType(Paths.get(STORAGEPATH).resolve(filename)))
 				.header(HttpHeaders.CONTENT_LENGTH, String.valueOf(resource.contentLength())).body(resource);
 	}
+
 	@PostMapping("/libros")
 	public Libro crear(@RequestParam(name = "imagen", required = false) MultipartFile imagen,
 			@RequestParam("titulo") String titulo, @RequestParam("autor") String autor,
-			@RequestParam("anioDePubblicacion") int anioDePubblicacion,	@RequestParam("isbn") String isbn,
+			@RequestParam("anioDePubblicacion") int anioDePubblicacion, @RequestParam("isbn") String isbn,
 			@RequestParam("costo") int costo, @RequestParam("numPaginas") int numPaginas) throws Exception {
-		logger.info("call crear(" + titulo + ", " + autor + ", " + anioDePubblicacion + ", " + isbn + ", " + costo + ", " + numPaginas + ")");
+		logger.info("call crear(" + titulo + ", " + autor + ", " + anioDePubblicacion + ", " + isbn + ", " + costo
+				+ ", " + numPaginas + ")");
 		Libro libro = new Libro();
-		Libro.setNombre(nombre);
-		Libro.setPrecio(precio);
-		Libro.setDetalles(detalles);
-		Libro.setEstado("1");
+		libro.setTitulo(titulo);
+		libro.setAutor(autor);
+		libro.setanioDePubblicacion(anioDePubblicacion);
+		libro.setIsbn(isbn);
+		libro.setCosto(costo);
+		libro.setNumPaginas(numPaginas);
+
 		if (imagen != null && !imagen.isEmpty()) {
 			String filename = System.currentTimeMillis()
 					+ imagen.getOriginalFilename().substring(imagen.getOriginalFilename().lastIndexOf("."));
-			producto.setImagen(filename);
+			libro.setImagen(filename);
 			if (Files.notExists(Paths.get(STORAGEPATH))) {
 				Files.createDirectories(Paths.get(STORAGEPATH));
 			}
 			Files.copy(imagen.getInputStream(), Paths.get(STORAGEPATH).resolve(filename));
 		}
-		productoService.save(producto);
-		return producto;
-	
+		librosService.save(libro);
+		return libro;
+
+	}
 }
